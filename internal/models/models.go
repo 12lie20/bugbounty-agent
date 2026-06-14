@@ -2,6 +2,34 @@ package models
 
 import "time"
 
+// OpencodeModel describes a selectable model on opencode.ai Go.
+type OpencodeModel struct {
+	DisplayName string
+	APIType     string
+	Model       string
+	BaseURL     string
+}
+
+// OpencodeModels is the curated list shown in the interactive picker.
+var OpencodeModels = []OpencodeModel{
+	// /v1/messages models
+	{DisplayName: "Qwen3.7 Max", APIType: "opencode-messages", Model: "qwen3.7-max", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "Qwen3.7 Plus", APIType: "opencode-messages", Model: "qwen3.7-plus", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "Qwen3.6 Plus", APIType: "opencode-messages", Model: "qwen3.6-plus", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "MiniMax M3", APIType: "opencode-messages", Model: "minimax-m3", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "MiniMax M2.7", APIType: "opencode-messages", Model: "minimax-m2.7", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "MiniMax M2.5", APIType: "opencode-messages", Model: "minimax-m2.5", BaseURL: "https://opencode.ai/zen/go/v1"},
+	// /v1/chat/completions models
+	{DisplayName: "GLM-5.1", APIType: "opencode-chat", Model: "glm-5.1", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "GLM-5", APIType: "opencode-chat", Model: "glm-5", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "Kimi K2.7", APIType: "opencode-chat", Model: "kimi-k2.7", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "Kimi K2.6", APIType: "opencode-chat", Model: "kimi-k2.6", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "DeepSeek V4 Pro", APIType: "opencode-chat", Model: "deepseek-v4-pro", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "DeepSeek V4 Flash", APIType: "opencode-chat", Model: "deepseek-v4-flash", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "MiMo-V2.5", APIType: "opencode-chat", Model: "mimo-v2.5", BaseURL: "https://opencode.ai/zen/go/v1"},
+	{DisplayName: "MiMo-V2.5-Pro", APIType: "opencode-chat", Model: "mimo-v2.5-pro", BaseURL: "https://opencode.ai/zen/go/v1"},
+}
+
 // Phase represents the strategic phase of the bug bounty workflow.
 type Phase string
 

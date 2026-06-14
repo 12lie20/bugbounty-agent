@@ -1,7 +1,7 @@
 llm:
-  # API type for opencode.ai Go models:
-  # - "opencode-chat"      for /v1/chat/completions models (GLM-5, Kimi, DeepSeek, MiMo)
-  # - "opencode-messages"  for /v1/messages models (Qwen3.7, MiniMax)
+  # These values are overridden by the interactive model picker on startup.
+  # You can also set them via environment variables:
+  #   BB_AGENT_LLM_API_TYPE, BB_AGENT_LLM_BASE_URL, BB_AGENT_LLM_MODEL
   api_type: "opencode-messages"
   api_key: "${BB_AGENT_LLM_API_KEY}"
   base_url: "https://opencode.ai/zen/go/v1"

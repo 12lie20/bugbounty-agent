@@ -5,12 +5,16 @@ import (
 	"os"
 	"strings"
 
+	"github.com/joho/godotenv"
 	"github.com/redteam/bugbounty-agent/internal/models"
 	"github.com/spf13/viper"
 )
 
-// Load reads configuration from config.yaml and environment variables.
+// Load reads configuration from config.yaml, .env file, and environment variables.
 func Load(path string) (*models.Config, error) {
+	// Load .env if present; ignore errors if the file does not exist.
+	_ = godotenv.Load(".env")
+
 	v := viper.New()
 	v.SetConfigFile(path)
 	v.SetEnvPrefix("BB_AGENT")
@@ -40,6 +44,9 @@ func Load(path string) (*models.Config, error) {
 func applyEnvOverrides(cfg *models.Config) error {
 	if key := os.Getenv("BB_AGENT_LLM_API_KEY"); key != "" {
 		cfg.LLM.APIKey = key
+	}
+	if apiType := os.Getenv("BB_AGENT_LLM_API_TYPE"); apiType != "" {
+		cfg.LLM.APIType = apiType
 	}
 	if url := os.Getenv("BB_AGENT_LLM_BASE_URL"); url != "" {
 		cfg.LLM.BaseURL = url
