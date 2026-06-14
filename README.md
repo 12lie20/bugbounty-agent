@@ -34,18 +34,37 @@ This tool is intended **only** for:
    sudo apt install -y nmap ffuf subfinder amass httpx whatweb nikto gau katana dalfox jq
    ```
 
-2. Set your LLM API key:
-   ```bash
-   export BB_AGENT_LLM_API_KEY="sk-..."
-   ```
+2. Edit `config.yaml` to set the target domain, scope, and other preferences.
 
-3. Edit `config.yaml` to set the target domain, scope, and LLM provider.
-
-4. Build and run:
+3. Build and run:
    ```bash
    go mod tidy
    go build -o bugbounty-agent ./cmd/main.go
    ./bugbounty-agent -config config.yaml
+   ```
+
+4. On the first run, the agent will ask for your opencode.ai API key and save it to `.env`.
+
+5. Every time you run the agent, an interactive menu lets you pick the opencode Go model with one keystroke:
+   ```
+   Select an opencode.ai Go model:
+   --------------------------------------------------
+   [ 1] Qwen3.7 Max        (opencode-messages)
+   [ 2] Qwen3.7 Plus       (opencode-messages)
+   [ 3] Qwen3.6 Plus       (opencode-messages)
+   [ 4] MiniMax M3         (opencode-messages)
+   [ 5] MiniMax M2.7       (opencode-messages)
+   [ 6] MiniMax M2.5       (opencode-messages)
+   [ 7] GLM-5.1            (opencode-chat)
+   [ 8] GLM-5              (opencode-chat)
+   [ 9] Kimi K2.7          (opencode-chat)
+   [10] Kimi K2.6          (opencode-chat)
+   [11] DeepSeek V4 Pro    (opencode-chat)
+   [12] DeepSeek V4 Flash  (opencode-chat)
+   [13] MiMo-V2.5          (opencode-chat)
+   [14] MiMo-V2.5-Pro      (opencode-chat)
+   --------------------------------------------------
+   Choice: 1
    ```
 
 ## Configuration
