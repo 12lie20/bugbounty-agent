@@ -1,0 +1,97 @@
+# Autonomous Bug Bounty Agent (Educational / Authorized Use Only)
+
+A production-oriented Go framework for an autonomous LLM-driven bug bounty agent that runs on Kali Linux. It implements a strict ReAct planning loop, command guardrails, context minimization, and self-healing adaptation.
+
+## ⚠️ Legal & Ethical Warning
+
+This tool is intended **only** for:
+- Bug bounty programs with explicit written authorization.
+- Penetration testing engagements with signed contracts.
+- Lab environments you own.
+
+**Never** point this agent at systems you do not have permission to test.
+
+## Features
+
+- **Advanced ReAct Planning Loop**: Strategic phases (recon -> scanning -> analysis -> exploitation -> reporting).
+- **Strict JSON Output + Repair**: LLM must return `AdvancedResponse` JSON; Go validates, extracts the JSON block, and auto-repairs common LLM JSON mistakes with `github.com/kaptinlin/jsonrepair` before giving up.
+- **Command Guardrails**: Allowlist of tools, blacklist of dangerous patterns, out-of-scope checks, and POSIX-style argument splitting via `github.com/google/shlex`.
+- **Smart Context Minimization**: Filters tool output by security keywords and regex patterns (open ports, status codes, CVEs, endpoints, etc.) instead of blind head/tail truncation, and deduplicates noisy lines like repeated 403s.
+- **Context Ballooning Protection**: Sends the LLM a compact state snapshot with recent updates only, not the full target map + full history on every turn.
+- **Self-Healing Adapter**: Detects WAF/rate-limit blocks, timeouts, and missing tools and adapts.
+- **Safe Execution**: Uses `os/exec` without a shell, rejects pipes/semicolons/command substitution, and enforces a 10-minute timeout per command.
+- **Parallel Recon Boost**: Runs independent recon commands concurrently at startup for faster target mapping.
+- **Adaptive Rate Limiting**: Slows down automatically when blocked and speeds up when responses are clean.
+- **Tool Result Parsers**: Automatically extracts structured findings from `nmap`, `ffuf`, `httpx`, and `nikto` outputs.
+- **Persistent State**: Saves progress to `state.jsonl` after every iteration and can resume from it.
+- **Proxy & User-Agent Rotation**: Configurable proxy and rotating user-agents in `config.yaml`.
+
+## Quick Start
+
+1. Install Go 1.26+ and required tools on Kali Linux:
+   ```bash
+   sudo apt update
+   sudo apt install -y nmap ffuf subfinder amass httpx whatweb nikto gau katana dalfox jq
+   ```
+
+2. Set your LLM API key:
+   ```bash
+   export BB_AGENT_LLM_API_KEY="sk-..."
+   ```
+
+3. Edit `config.yaml` to set the target domain, scope, and LLM provider.
+
+4. Build and run:
+   ```bash
+   go mod tidy
+   go build -o bugbounty-agent ./cmd/main.go
+   ./bugbounty-agent -config config.yaml
+   ```
+
+## Configuration
+
+See `config.yaml`. Key settings:
+- `llm.provider`: `"openai"` or `"anthropic"`.
+- `llm.api_key`: API key for the chosen provider.
+- `llm.base_url`: Endpoint such as `https://api.openai.com/v1` or `https://opencode.ai/zen/go/v1`.
+- `llm.model`: Model name such as `gpt-4o-mini` or `qwen3.7-max`.
+- `target.root_domain`: Root target domain.
+- `target.in_scope_domains`: Allowed target patterns.
+- `target.out_of_scope`: Forbidden target patterns.
+- `guardrails.allowed_tools`: Tools the agent may invoke.
+- `guardrails.blocked_words`: Dangerous patterns that always reject the command.
+
+## Architecture
+
+```
+cmd/main.go                 # Entry point
+internal/config/            # Configuration loading
+internal/models/            # Shared data models and JSON schema
+internal/memory/            # Target map, history, output filtering
+internal/guardrails/        # Command sanitizer and scope checks
+internal/executor/          # Secure CLI execution + parallel runner
+internal/llm/               # OpenAI-compatible chat client + JSON repair
+internal/parser/            # Tool output parsers (nmap, ffuf, httpx, nikto)
+internal/persistence/       # Save/resume state to JSONL
+internal/ratelimit/         # Adaptive rate limiter
+internal/selfheal/          # Failure analysis and adaptation
+internal/planner/           # ReAct loop and system/user prompts
+```
+
+## Resuming a Scan
+
+The agent saves its state to `state.jsonl` after every iteration. To resume a previous scan, just run the agent again in the same directory. It will load the saved state and continue from the last iteration.
+
+To start fresh, delete `state.jsonl` before running.
+
+## Safety Notes
+
+- Commands are parsed without a shell; pipes, semicolons, backticks, and other operators are rejected.
+- Destructive keywords (`rm -rf`, `mkfs`, `dd`, etc.) are blocked.
+- Out-of-scope hosts are rejected.
+- Each command has a configurable timeout (default 10 minutes).
+- The LLM is forced to return JSON with `response_format: { "type": "json_object" }`.
+
+## License
+
+MIT — Use responsibly and only on systems you are authorized to test.

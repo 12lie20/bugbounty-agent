@@ -1,0 +1,10 @@
+.env
+.env.local
+*.exe
+bugbounty-agent
+*.log
+*.jsonl
+.vscode/
+.idea/
+vendor/
+dist/

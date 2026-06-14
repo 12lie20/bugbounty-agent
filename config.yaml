@@ -1,0 +1,91 @@
+llm:
+  provider: "anthropic"             # "openai" or "anthropic"
+  api_key: "${BB_AGENT_LLM_API_KEY}"
+  base_url: "https://opencode.ai/zen/go/v1"
+  model: "qwen3.7-max"
+  temperature: 0.2
+  max_tokens: 4096
+  timeout_sec: 180
+
+agent:
+  max_iterations: 50
+  command_timeout_min: 10
+  context_max_lines: 100
+  max_output_chars: 16000
+  adaptation_delay_sec: 60
+
+target:
+  root_domain: "example.com"
+  in_scope_domains:
+    - "example.com"
+    - "*.example.com"
+  out_of_scope:
+    - "*.prod.example.com"
+    - "payment.example.com"
+  rate_limit_rps: 1
+  proxy: ""                         # e.g. "http://127.0.0.1:8080"
+  user_agents:
+    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.0"
+    - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.0"
+    - "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.0"
+
+guardrails:
+  allowed_tools:
+    - "nmap"
+    - "ffuf"
+    - "subfinder"
+    - "amass"
+    - "httpx"
+    - "curl"
+    - "wget"
+    - "whois"
+    - "dig"
+    - "nslookup"
+    - "whatweb"
+    - "nikto"
+    - "gau"
+    - "katana"
+    - "dalfox"
+    - " waybackurls"
+    - "jq"
+    - "grep"
+    - "sed"
+    - "awk"
+    - "cat"
+    - "head"
+    - "tail"
+    - "wc"
+  blocked_words:
+    - "rm -rf"
+    - "mkfs"
+    - "dd if="
+    - "fdisk"
+    - "parted"
+    - ":(){ :|:& };:"
+    - "shutdown"
+    - "reboot"
+    - "halt"
+    - "poweroff"
+    - "init 0"
+    - "kill -9"
+    - "> /dev/"
+    - "chmod -R 777 /"
+    - "chown -R root /"
+    - "wget -O- | sh"
+    - "curl | sh"
+    - "curl | bash"
+    - "base64 -d | sh"
+    - "perl -e"
+    - "python -c"
+    - "nc -e"
+    - "netcat -e"
+    - "bash -i"
+    - "sh -i"
+    - "/etc/passwd"
+    - "/etc/shadow"
+    - "/proc/"
+    - "/sys/"
+  allowed_modes:
+    - "hunting"
+    - "exploiting"
+    - "finished"
