@@ -1,5 +1,8 @@
 llm:
-  provider: "anthropic"             # "openai" or "anthropic"
+  # API type for opencode.ai Go models:
+  # - "opencode-chat"      for /v1/chat/completions models (GLM-5, Kimi, DeepSeek, MiMo)
+  # - "opencode-messages"  for /v1/messages models (Qwen3.7, MiniMax)
+  api_type: "opencode-messages"
   api_key: "${BB_AGENT_LLM_API_KEY}"
   base_url: "https://opencode.ai/zen/go/v1"
   model: "qwen3.7-max"
@@ -46,7 +49,7 @@ guardrails:
     - "gau"
     - "katana"
     - "dalfox"
-    - " waybackurls"
+    - "waybackurls"
     - "jq"
     - "grep"
     - "sed"

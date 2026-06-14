@@ -188,7 +188,7 @@ type AnthropicResponse struct {
 // Config holds the application configuration.
 type Config struct {
 	LLM struct {
-		Provider     string  `mapstructure:"provider"`
+		APIType      string  `mapstructure:"api_type"`
 		APIKey       string  `mapstructure:"api_key"`
 		BaseURL      string  `mapstructure:"base_url"`
 		Model        string  `mapstructure:"model"`

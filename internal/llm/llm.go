@@ -37,23 +37,23 @@ func NewClient(cfg *models.Config) *Client {
 
 // Chat sends messages and returns a strict AdvancedResponse.
 func (c *Client) Chat(ctx context.Context, systemPrompt, userPrompt string) (*models.AdvancedResponse, error) {
-	provider := strings.ToLower(c.cfg.LLM.Provider)
-	if provider == "" {
-		provider = "openai"
+	apiType := strings.ToLower(c.cfg.LLM.APIType)
+	if apiType == "" {
+		apiType = "opencode-chat"
 	}
 
-	switch provider {
-	case "anthropic":
-		return c.chatAnthropic(ctx, systemPrompt, userPrompt)
-	case "openai":
-		return c.chatOpenAI(ctx, systemPrompt, userPrompt)
+	switch apiType {
+	case "opencode-messages", "anthropic":
+		return c.chatMessages(ctx, systemPrompt, userPrompt)
+	case "opencode-chat", "openai":
+		return c.chatCompletions(ctx, systemPrompt, userPrompt)
 	default:
-		return nil, fmt.Errorf("unsupported llm provider: %s", c.cfg.LLM.Provider)
+		return nil, fmt.Errorf("unsupported llm api_type: %s", c.cfg.LLM.APIType)
 	}
 }
 
-// chatOpenAI uses the OpenAI-compatible chat completions endpoint.
-func (c *Client) chatOpenAI(ctx context.Context, systemPrompt, userPrompt string) (*models.AdvancedResponse, error) {
+// chatCompletions uses the OpenAI-compatible chat completions endpoint.
+func (c *Client) chatCompletions(ctx context.Context, systemPrompt, userPrompt string) (*models.AdvancedResponse, error) {
 	reqBody := models.LLMRequest{
 		Model:       c.cfg.LLM.Model,
 		Temperature: c.cfg.LLM.Temperature,
@@ -110,8 +110,8 @@ func (c *Client) chatOpenAI(ctx context.Context, systemPrompt, userPrompt string
 	return c.extractAndValidate(content)
 }
 
-// chatAnthropic uses the Anthropic-compatible messages endpoint.
-func (c *Client) chatAnthropic(ctx context.Context, systemPrompt, userPrompt string) (*models.AdvancedResponse, error) {
+// chatMessages uses the Anthropic-compatible messages endpoint.
+func (c *Client) chatMessages(ctx context.Context, systemPrompt, userPrompt string) (*models.AdvancedResponse, error) {
 	reqBody := models.AnthropicRequest{
 		Model:       c.cfg.LLM.Model,
 		Temperature: c.cfg.LLM.Temperature,

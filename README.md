@@ -51,10 +51,37 @@ This tool is intended **only** for:
 ## Configuration
 
 See `config.yaml`. Key settings:
-- `llm.provider`: `"openai"` or `"anthropic"`.
-- `llm.api_key`: API key for the chosen provider.
+- `llm.api_type`: `"opencode-chat"` or `"opencode-messages"` (also accepts `"openai"` and `"anthropic"`).
+- `llm.api_key`: API key for the chosen endpoint.
 - `llm.base_url`: Endpoint such as `https://api.openai.com/v1` or `https://opencode.ai/zen/go/v1`.
-- `llm.model`: Model name such as `gpt-4o-mini` or `qwen3.7-max`.
+- `llm.model`: Model name such as `qwen3.7-max`, `deepseek-v4-pro`, or `glm-5.1`.
+
+### opencode.ai Go Models
+
+The agent supports all opencode.ai Go models by selecting the correct `api_type`:
+
+| API Type | Endpoint | Models |
+|---|---|---|
+| `opencode-chat` | `/v1/chat/completions` | GLM-5.1, GLM-5, Kimi K2.7, Kimi K2.6, DeepSeek V4 Pro, DeepSeek V4 Flash, MiMo-V2.5, MiMo-V2.5-Pro |
+| `opencode-messages` | `/v1/messages` | Qwen3.7 Max, Qwen3.7 Plus, Qwen3.6 Plus, MiniMax M3, MiniMax M2.7, MiniMax M2.5 |
+
+Example for Qwen3.7 Max:
+```yaml
+llm:
+  api_type: "opencode-messages"
+  api_key: "${BB_AGENT_LLM_API_KEY}"
+  base_url: "https://opencode.ai/zen/go/v1"
+  model: "qwen3.7-max"
+```
+
+Example for DeepSeek V4 Pro:
+```yaml
+llm:
+  api_type: "opencode-chat"
+  api_key: "${BB_AGENT_LLM_API_KEY}"
+  base_url: "https://opencode.ai/zen/go/v1"
+  model: "deepseek-v4-pro"
+```
 - `target.root_domain`: Root target domain.
 - `target.in_scope_domains`: Allowed target patterns.
 - `target.out_of_scope`: Forbidden target patterns.
@@ -70,7 +97,7 @@ internal/models/            # Shared data models and JSON schema
 internal/memory/            # Target map, history, output filtering
 internal/guardrails/        # Command sanitizer and scope checks
 internal/executor/          # Secure CLI execution + parallel runner
-internal/llm/               # OpenAI-compatible chat client + JSON repair
+internal/llm/               # OpenAI/Anthropic-compatible chat client + JSON repair
 internal/parser/            # Tool output parsers (nmap, ffuf, httpx, nikto)
 internal/persistence/       # Save/resume state to JSONL
 internal/ratelimit/         # Adaptive rate limiter
